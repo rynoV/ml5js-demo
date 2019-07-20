@@ -1,5 +1,4 @@
-import React, { useRef, useState } from 'react'
-import { Helmet } from 'react-helmet'
+import React, { useEffect, useRef, useState } from 'react'
 
 import robinImage from '../../static/robin.png'
 
@@ -12,15 +11,6 @@ export default function IndexPage() {
   const [results, setResults]               = useState()
 
   const robinImageRef = useRef()
-
-  function handleScriptInject({ scriptTags }) {
-    if (scriptTags) {
-      const scriptTag  = scriptTags[0]
-      scriptTag.onload = () => {
-        setMl5Loaded(true)
-      }
-    }
-  }
 
   if (ml5Loaded && !loadingResults) {
     (async function() {
@@ -35,17 +25,20 @@ export default function IndexPage() {
     )()
   }
 
+  useEffect(() => {
+    const script = document.createElement('script')
+
+    script.src    = 'https://unpkg.com/ml5@0.3.1/dist/ml5.min.js'
+    script.async  = true
+    script.onload = () => {
+      setMl5Loaded(true)
+    }
+
+    document.body.appendChild(script)
+  }, [])
+
   return (
     <Layout>
-      {/* Load the ml5js library. */}
-      <Helmet
-        script={[{ src: 'https://unpkg.com/ml5@0.3.1/dist/ml5.min.js' }]}
-        // Helmet doesn't support `onload` in script objects so we have to
-        // hack in our own
-        onChangeClientState={(newState, addedTags) =>
-          handleScriptInject(addedTags)
-        }
-      />
       <SEO title='Home' />
       <h1>ML5 demo</h1>
       <img src={robinImage} alt='robin' ref={robinImageRef} />
