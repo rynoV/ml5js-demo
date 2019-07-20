@@ -1,7 +1,25 @@
 .container {
-
 }
 
 .nav {
+  width: 100vw;
+  height: 30px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-top: 3px solid #37fff4;
+}
 
+.nav a {
+  color: black;
+  text-decoration: underline;
+  margin: 0 1rem;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
