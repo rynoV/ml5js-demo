@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import robinImage from '../../static/robin.png'
 
+import styles from './index.module.css'
+
 export default function IndexPage() {
   const [ml5Loaded, setMl5Loaded] = useState(false)
   const [loadingResults, setLoadingResults] = useState(false)
@@ -44,21 +46,47 @@ export default function IndexPage() {
   }
 
   return (
-    <>
-      <h1>ML5 demo</h1>
-      <img src={imageURL} alt='random' ref={imageRef} crossOrigin='Anonymous' />
-      {loadingResults && <p>ML5 is guessing...</p>}
-      {results &&
-        !loadingResults &&
-        results.map((result, index) => {
-          return (
-            <p key={result.label}>
-              ML5 guess #{index}: {result.label} <br />
-              ML5 confidence #{index}: {result.confidence}
-            </p>
-          )
-        })}
-      <button onClick={setNewImage}>Get random image</button>
-    </>
+    <div className={styles.container}>
+      <h1 className={styles.title}>ML5 demo</h1>
+      <div className={styles.main}>
+        <img
+          className={styles.image}
+          src={imageURL}
+          alt='random'
+          ref={imageRef}
+          crossOrigin='Anonymous'
+        />
+        <div className={styles.result}>
+          {loadingResults && (
+            <span
+              className={styles.thinkingEmoji}
+              role='img'
+              aria-label='Thinking emoji'
+            >
+              🤔
+            </span>
+          )}
+          {results &&
+            !loadingResults &&
+            results.map((result, index) => {
+              return (
+                <p key={result.label}>
+                  <label>
+                    Guess #{index}: <br />
+                    <span>{result.label}</span>
+                  </label>
+                  <label>
+                    Confidence #{index}: <br />
+                    <span>{Math.round(result.confidence * 100)}%</span>
+                  </label>
+                </p>
+              )
+            })}
+        </div>
+      </div>
+      <button className={styles.button} onClick={setNewImage}>
+        Get random image
+      </button>
+    </div>
   )
 }
