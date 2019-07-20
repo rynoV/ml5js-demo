@@ -6,8 +6,9 @@ export default function IndexPage() {
   const [ml5Loaded, setMl5Loaded] = useState(false)
   const [loadingResults, setLoadingResults] = useState(false)
   const [results, setResults] = useState()
+  const [imageURL, setImageURL] = useState(robinImage)
 
-  const robinImageRef = useRef()
+  const imageRef = useRef()
 
   useEffect(() => {
     const script = document.createElement('script')
@@ -25,27 +26,39 @@ export default function IndexPage() {
     if (ml5Loaded && !loadingResults) {
       ;(async function() {
         setLoadingResults(true)
+
         const classifier = await ml5.imageClassifier('MobileNet')
 
-        const results = await classifier.classify(robinImageRef.current)
+        const results = await classifier.classify(imageRef.current)
 
         setResults(results)
         setLoadingResults(false)
       })()
     }
-  }, [ml5Loaded])
+  }, [ml5Loaded, imageURL])
+
+  async function setNewImage() {
+    const { url } = await fetch('https://picsum.photos/300/300')
+
+    setImageURL(url)
+  }
 
   return (
     <>
       <h1>ML5 demo</h1>
-      <img src={robinImage} alt='robin' ref={robinImageRef} />
+      <img src={imageURL} alt='random' ref={imageRef} crossOrigin='Anonymous' />
       {loadingResults && <p>ML5 is guessing...</p>}
-      {results && (
-        <p>
-          ML5 guess: {results[0].label} <br />
-          ML5 confidence: {results[0].confidence}
-        </p>
-      )}
+      {results &&
+        !loadingResults &&
+        results.map((result, index) => {
+          return (
+            <p key={result.label}>
+              ML5 guess #{index}: {result.label} <br />
+              ML5 confidence #{index}: {result.confidence}
+            </p>
+          )
+        })}
+      <button onClick={setNewImage}>Get random image</button>
     </>
   )
 }
